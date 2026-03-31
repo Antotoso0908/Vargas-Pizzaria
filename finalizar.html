@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finalizar Pedido - Vargas Pizzaria</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #000; color: white; text-align: center; padding: 20px; }
+        .resumo { background: #1a1a1a; border-radius: 15px; padding: 20px; text-align: left; margin: 20px auto; max-width: 400px; border: 1px solid #E63946; }
+        .item-checkout { display: flex; justify-content: space-between; margin-bottom: 10px; border-bottom: 1px solid #333; padding-bottom: 5px; }
+        .total { font-size: 22px; font-weight: bold; color: #4CAF50; margin-top: 20px; text-align: right; }
+        
+        h3 { color: #E63946; margin-top: 15px; margin-bottom: 5px; font-size: 16px; text-transform: uppercase; }
+        input, select, textarea { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: none; box-sizing: border-box; font-size: 16px; background: #fff; color: #000; }
+        
+        .codigo-seguranca { background: #222; padding: 15px; border-radius: 10px; border: 1px dashed #555; margin-top: 10px; }
+        .hint { font-size: 12px; color: #aaa; font-style: italic; margin-top: -5px; display: block; }
+
+        .btn-enviar { background-color: #25D366; color: white; border: none; padding: 18px; width: 100%; border-radius: 10px; font-weight: bold; font-size: 18px; cursor: pointer; margin-top: 20px; }
+        .btn-limpar { background: none; color: #666; border: none; cursor: pointer; margin-top: 15px; text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+    <h1 style="color: #E63946;">🚀 FINALIZAR DELIVERY</h1>
+
+    <div class="resumo" id="lista-pedido"></div>
+
+    <div class="resumo">
+        <h3>Seus Dados:</h3>
+        <input type="text" id="nome-cliente" placeholder="Seu Nome Completo">
+        
+        <h3>Forma de Pagamento:</h3>
+        <select id="pagamento" onchange="verificarDinheiro()">
+            <option value="Pix">Pix</option>
+            <option value="Cartão">Cartão (Maquininha)</option>
+            <option value="Dinheiro">Dinheiro</option>
+        </select>
+
+        <div id="campo-troco" style="display:none;">
+            <p style="margin: 0; font-size: 14px;">Troco para quanto?</p>
+            <input type="number" id="valor-troco" placeholder="Ex: 100">
+        </div>
+
+        <div class="codigo-seguranca">
+            <h3>Código de Segurança (Opcional):</h3>
+            <input type="text" id="codigo-seg" maxlength="4" placeholder="Ex: 1234">
+            <span class="hint">* Invente um código de 4 dígitos para confirmar a entrega.</span>
+        </div>
+    </div>
+
+    <button class="btn-enviar" onclick="enviarWhatsApp()">✅ ENVIAR PEDIDO VIA WHATSAPP</button>
+    <button class="btn-limpar" onclick="limparCarrinho()">Esvaziar Carrinho</button>
+    
+    <br><br>
+    <a href="cardapio.html" style="color: #E63946; text-decoration: none; font-weight: bold;">← Voltar ao Cardápio</a>
+
+    <script>
+        let carrinho = JSON.parse(localStorage.getItem('vargas_carrinho')) || [];
+        let total = 0;
+
+        const listaDiv = document.getElementById('lista-pedido');
+        if(carrinho.length === 0) {
+            listaDiv.innerHTML = "<p style='text-align:center'>Seu carrinho está vazio.</p>";
+        } else {
+            carrinho.forEach(item => {
+                listaDiv.innerHTML += `<div class="item-checkout"><span>${item.nome}</span><span>R$ ${item.preco},00</span></div>`;
+                total += item.preco;
+            });
+            listaDiv.innerHTML += `<div class="total">Total: R$ ${total},00</div>`;
+        }
+
+        function verificarDinheiro() {
+            const pag = document.getElementById('pagamento').value;
+            document.getElementById('campo-troco').style.display = (pag === "Dinheiro") ? "block" : "none";
+        }
+
+        function enviarWhatsApp() {
+            const nome = document.getElementById('nome-cliente').value;
+            const pag = document.getElementById('pagamento').value;
+            const troco = document.getElementById('valor-troco').value;
+            const codigo = document.getElementById('codigo-seg').value;
+
+            if(!nome) return alert("Por favor, digite seu nome!");
+            if(carrinho.length === 0) return alert("O carrinho está vazio!");
+
+            let msg = `*🍕 NOVO PEDIDO - VARGAS PIZZARIA*%0A%0A`;
+            msg += `*Cliente:* ${nome}%0A`;
+            msg += `*Pagamento:* ${pag}${troco ? ' (Troco p/ ' + troco + ')' : ''}%0A`;
+            
+            if(codigo) {
+                msg += `*CÓDIGO DE SEGURANÇA:* [ ${codigo.toUpperCase()} ]%0A`;
+            }
+
+            msg += `%0A*ÍTENS:*%0A`;
+            carrinho.forEach(item => { msg += `- ${item.nome}: R$ ${item.preco},00%0A`; });
+            msg += `%0A*TOTAL: R$ ${total},00*%0A%0A`;
+            msg += `_Caro cliente: Por favor, enviar sua localização..._`;
+
+            const numeroWhats = "5565999205793"; 
+            window.location.href = `https://wa.me/${numeroWhats}?text=${msg}`;
+        }
+
+        function limparCarrinho() {
+            if(confirm("Deseja limpar o pedido?")) {
+                localStorage.removeItem('vargas_carrinho');
+                location.reload();
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal Funcionário - Vargas Pizzaria</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background-color: #000; color: white; text-align: center; margin: 0; padding: 20px; }
+        
+        /* Barra de Topo */
+        .nav-topo { display: flex; justify-content: space-between; align-items: center; max-width: 500px; margin: 0 auto 30px auto; padding: 0 10px; }
+        .btn-voltar { color: #888; text-decoration: underline; font-size: 13px; cursor: pointer; background: none; border: none; padding: 0; }
+        .link-gerente { color: #888; text-decoration: underline; font-size: 13px; cursor: pointer; }
+
+        /* Pop-ups (Modais) */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); }
+        .modal-content { background: #1a1a1a; margin: 25% auto; padding: 30px; border: 2px solid #E63946; width: 280px; border-radius: 20px; position: relative; }
+        .btn-modal { padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; border: none; margin: 5px; }
+        .btn-vermelho { background: #E63946; color: white; }
+        .btn-cinza { background: #444; color: white; }
+
+        /* Estrutura de Abas */
+        .aba-setor { width: 100%; max-width: 500px; margin: 12px auto; border-radius: 15px; overflow: hidden; border: 1px solid #333; }
+        .aba-topo { padding: 20px; font-weight: bold; cursor: pointer; display: flex; justify-content: space-between; text-transform: uppercase; font-size: 14px; }
+        .aba-conteudo { display: none; background: #111; padding: 20px; border-top: 1px solid #333; }
+
+        /* Cores */
+        .c-1 { background: #E63946; } .c-2 { background: #FFB300; color: #000; } 
+        .c-3 { background: #F3722C; } .c-4 { background: #4CAF50; } .c-5 { background: #0077B6; }
+
+        .btn-entrar { background: white; color: black; border: none; padding: 15px; width: 100%; border-radius: 10px; font-weight: bold; cursor: pointer; margin-bottom: 25px; font-size: 16px; }
+
+        /* Grid de Funcionários */
+        .equipe-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .card-func { background: #1a1a1a; border: 1px solid #222; display: flex; align-items: center; padding: 8px; border-radius: 10px; }
+        .foto { width: 40px; height: 55px; background: #333; border-radius: 4px; margin-right: 10px; flex-shrink: 0; }
+        .info { text-align: left; overflow: hidden; }
+        .nome { font-size: 11px; font-weight: bold; margin: 0; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .idade { font-size: 10px; color: #666; margin-top: 2px; }
+
+        /* Login */
+        #tela-login { background: #1a1a1a; padding: 40px 20px; border-radius: 25px; border: 2px solid #E63946; max-width: 320px; margin: 80px auto; }
+        .input-vargas { width: 100%; padding: 15px; margin: 10px 0; border-radius: 12px; border: 1px solid #333; background: #000; color: white; font-size: 16px; box-sizing: border-box; }
+    </style>
+</head>
+<body>
+
+    <div id="modal-sair" class="modal">
+        <div class="modal-content">
+            <h3 style="margin-top:0;">AVISO</h3>
+            <p style="font-size: 14px; color: #bbb;">Se você voltar, terá que fazer o login novamente para acessar o portal.</p>
+            <button class="btn-modal btn-vermelho" onclick="confirmarSair()">OK</button>
+            <button class="btn-modal btn-cinza" onclick="fecharModalSair()">CANCELAR</button>
+        </div>
+    </div>
+
+    <div id="modal-erro" class="modal">
+        <div class="modal-content">
+            <h2 style="color: #E63946; margin: 0;">🚫</h2>
+            <h3 style="color: #fff; margin: 10px 0;">ACESSO NEGADO</h3>
+            <p style="font-size: 13px; color: #888;">Você não pertence a este setor.</p>
+            <button class="btn-modal btn-vermelho" onclick="fecharModalErro()">OK</button>
+        </div>
+    </div>
+
+    <div id="tela-login">
+        <h2 style="color: #E63946; margin: 0;">LOGIN VARGAS PIZZARIA SISTEM</h2>
+        <input type="email" id="email" class="input-vargas" placeholder="E-mail">
+        <input type="password" id="senha" class="input-vargas" placeholder="Senha">
+        <button onclick="logar()" style="background:#E63946; color:white; border:none; padding:18px; width:100%; border-radius:12px; font-weight:bold; cursor:pointer; margin-top:10px;">ENTRAR</button>
+    </div>
+
+    <div id="portal" style="display:none;">
+        <div class="nav-topo">
+            <button class="btn-voltar" onclick="abrirModalSair()">Voltar para o Início</button>
+            <span class="link-gerente" onclick="alert('Indo para Painel do Gerente...')">Acesso Restrito</span>
+        </div>
+        
+        <h1 style="color: #E63946;">PAINEL DA EQUIPE</h1>
+
+        <div class="aba-setor">
+            <div class="aba-topo c-1" onclick="toggle('setor-1')">💰 CAIXA <span>▼</span></div>
+            <div id="setor-1" class="aba-conteudo">
+                <button class="btn-entrar" onclick="tentar(1)">ENTRAR</button>
+                <div class="equipe-grid">
+                    <div class="card-func"><div class="foto"></div><div class="info"><p class="nome">Anthony Vargas</p><p class="idade">38</p></div></div>
+                    <div class="card-func"><div class="foto"></div><div class="info"><p class="nome">Marcos Lima</p><p class="idade">29</p></div></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="aba-setor">
+            <div class="aba-topo c-2" onclick="toggle('setor-2')">🤵 GARÇOM <span>▼</span></div>
+            <div id="setor-2" class="aba-conteudo">
+                <button class="btn-entrar" onclick="tentar(2)">ENTRAR</button>
+                <div class="equipe-grid">
+                    <div class="card-func"><div class="foto"></div><div class="info"><p class="nome">Ricardo Silva</p><p class="idade">24</p></div></div>
+                    <div class="card-func"><div class="foto"></div><div class="info"><p class="nome">João Pedro</p><p class="idade">31</p></div></div>
+                    <div class="card-func"><div class="foto"></div><div class="info"><p class="nome">Lucas Neto</p><p class="idade">22</p></div></div>
+                    <div class="card-func"><div class="foto"></div><div class="info"><p class="nome">Felipe Amorim</p><p class="idade">27</p></div></div>
+                    <div class="card-func"><div class="foto"></div><div class="info"><p class="nome">Bruno Costa</p><p class="idade">30</p></div></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="aba-setor">
+            <div class="aba-topo c-3" onclick="toggle('setor-3')">🍕 COZINHA <span>▼</span></div>
+            <div id="setor-3" class="aba-conteudo">
+                <button class="btn-entrar" onclick="tentar(3)">ENTRAR </button>
+                <div class="equipe-grid">
+                    <div class="card-func"><div class="foto"></div><div class="info"><p class="nome">Mestre Souza</p><p class="idade">45</p></div></div>
+                    <div class="card-func"><div class="foto"></div><div class="info"><p class="nome">André Pizzas</p><p class="idade">33</p></div></div>
+                    <div class="card-func"><div class="foto"></div><div class="info"><p class="nome">Carla Maria</p><p class="idade">28</p></div></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="aba-setor">
+            <div class="aba-topo c-4" onclick="toggle('setor-4')">🛵 ENTREGA <span>▼</span></div>
+            <div id="setor-4" class="aba-conteudo">
+                <button class="btn-entrar" onclick="tentar(4)">ENTRAR </button>
+                <div class="equipe-grid">
+                    <div class="card-func"><div class="foto"></div><div class="info"><p class="nome">Júnior Moto</p><p class="idade">26</p></div></div>
+                    <div class="card-func"><div class="foto"></div><div class="info"><p class="nome">Paulo Veloz</p><p class="idade">34</p></div></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="aba-setor">
+            <div class="aba-topo c-5" onclick="toggle('setor-5')">🧹 LIMPEZA <span>▼</span></div>
+            <div id="setor-5" class="aba-conteudo">
+                <button class="btn-entrar" onclick="tentar(5)">ENTRAR </button>
+                <div class="equipe-grid">
+                    <div class="card-func"><div class="foto"></div><div class="info"><p class="nome">Dona Ana</p><p class="idade">52</p></div></div>
+                    <div class="card-func"><div class="foto"></div><div class="info"><p class="nome">Beto Higiene</p><p class="idade">40</p></div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const funcionarios = {
+            "admin@vargas.com": { senha: "123", nome: "Anthony Vargas", setor: 1 },
+            "garcom@vargas.com": { senha: "456", nome: "Ricardo Silva", setor: 2 }
+        };
+
+        let usuarioLogado = null;
+
+        function logar() {
+            const e = document.getElementById('email').value;
+            const s = document.getElementById('senha').value;
+            if(funcionarios[e] && funcionarios[e].senha === s) {
+                usuarioLogado = funcionarios[e];
+                document.getElementById('tela-login').style.display = 'none';
+                document.getElementById('portal').style.display = 'block';
+            } else { alert("E-mail ou Senha incorretos!"); }
+        }
+
+        function toggle(id) {
+            const el = document.getElementById(id);
+            const status = el.style.display;
+            document.querySelectorAll('.aba-conteudo').forEach(a => a.style.display = 'none');
+            el.style.display = (status === 'block') ? 'none' : 'block';
+        }
+
+        function tentar(idSetorAba) {
+            if(usuarioLogado.setor === idSetorAba) {
+                alert("Abrindo painel do setor...");
+            } else {
+                document.getElementById('modal-erro').style.display = 'block';
+            }
+        }
+
+        // Funções dos Modais
+        function abrirModalSair() { document.getElementById('modal-sair').style.display = 'block'; }
+        function fecharModalSair() { document.getElementById('modal-sair').style.display = 'none'; }
+        function confirmarSair() { window.location.href = "index.html"; }
+        function fecharModalErro() { document.getElementById('modal-erro').style.display = 'none'; }
+    </script>
+</body>
+</html>

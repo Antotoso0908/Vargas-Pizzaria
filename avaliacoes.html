@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avaliação - Vargas Pizzaria</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #000; color: white; text-align: center; padding: 15px; margin: 0; }
+        
+        /* Botão Voltar */
+        .topo-nav { text-align: left; padding: 10px; max-width: 450px; margin: 0 auto; }
+        .btn-voltar { background: #333; color: white; border: none; padding: 10px 15px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+
+        .container { background: #1a1a1a; padding: 20px; border-radius: 20px; border: 2px solid #E63946; max-width: 450px; margin: 10px auto; }
+        
+        .secao { margin-top: 15px; text-align: left; }
+        label { font-weight: bold; color: #E63946; display: block; margin-bottom: 5px; font-size: 13px; text-transform: uppercase; }
+        
+        /* Menus Retráteis */
+        details { background: #222; border-radius: 10px; cursor: pointer; border: 1px solid #333; margin-bottom: 10px; }
+        summary { list-style: none; background: #333; color: white; font-weight: bold; text-align: center; padding: 15px; border-radius: 10px; }
+        details[open] summary { background: #E63946; }
+        
+        .lista-opcoes { max-height: 200px; overflow-y: auto; background: #1a1a1a; }
+        .mesa-item { padding: 15px; border-bottom: 1px solid #333; text-align: center; font-weight: bold; }
+
+        .garcom-item { display: flex; align-items: center; padding: 10px; border-bottom: 1px solid #333; }
+        .foto-perfil { width: 50px; height: 50px; border-radius: 50%; border: 2px solid #E63946; margin-right: 15px; background: #333; }
+        .info-garcom .n { font-weight: bold; color: #fff; display: block; }
+        .info-garcom .i { font-size: 12px; color: #aaa; }
+
+        /* Estrelas */
+        .pergunta { margin-top: 15px; font-weight: bold; color: #E63946; font-size: 14px; text-transform: uppercase; }
+        .estrelas { font-size: 40px; color: #444; cursor: pointer; margin-bottom: 10px; user-select: none; }
+        .estrelas span.ativo { color: #FFD700; text-shadow: 0 0 10px rgba(255, 215, 0, 0.5); }
+        
+        .btn-enviar { background: #4CAF50; color: white; border: none; padding: 20px; width: 100%; border-radius: 12px; font-weight: bold; font-size: 20px; margin-top: 20px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <div class="topo-nav">
+        <button class="btn-voltar" onclick="window.location.href='index.html'">⬅ VOLTAR AO INÍCIO</button>
+    </div>
+
+    <h1 style="margin: 10px 0;">VARGAS PIZZARIA 🍕</h1>
+    
+    <div class="container">
+        
+        <div class="secao">
+            <label>Nº da Mesa:</label>
+            <details id="detalhe-mesa">
+                <summary id="mesa-txt">ESCOLHA A MESA 👇</summary>
+                <div class="lista-opcoes" id="box-mesas"></div>
+            </details>
+        </div>
+
+        <div class="secao">
+            <label>Quem te atendeu?</label>
+            <details id="detalhe-garcom">
+                <summary id="garcom-txt">ESCOLHA O GARÇOM 👇</summary>
+                <div class="lista-opcoes">
+                    <div class="garcom-item" onclick="selG('Ricardo', 28, 11)">
+                        <img src="https://i.pravatar.cc/150?img=11" class="foto-perfil">
+                        <div class="info-garcom"><span class="n">Ricardo</span><span class="i">28 anos</span></div>
+                    </div>
+                    <div class="garcom-item" onclick="selG('Amanda', 24, 32)">
+                        <img src="https://i.pravatar.cc/150?img=32" class="foto-perfil">
+                        <div class="info-garcom"><span class="n">Amanda</span><span class="i">24 anos</span></div>
+                    </div>
+                    <div class="garcom-item" onclick="selG('Marcos', 35, 12)">
+                        <img src="https://i.pravatar.cc/150?img=12" class="foto-perfil">
+                        <div class="info-garcom"><span class="n">Marcos</span><span class="i">35 anos</span></div>
+                    </div>
+                    <div class="garcom-item" onclick="selG('Julia', 22, 16)">
+                        <img src="https://i.pravatar.cc/150?img=16" class="foto-perfil">
+                        <div class="info-garcom"><span class="n">Julia</span><span class="i">22 anos</span></div>
+                    </div>
+                    <div class="garcom-item" onclick="selG('Felipe', 30, 13)">
+                        <img src="https://i.pravatar.cc/150?img=13" class="foto-perfil">
+                        <div class="info-garcom"><span class="n">Felipe</span><span class="i">30 anos</span></div>
+                    </div>
+                </div>
+            </details>
+        </div>
+
+        <div class="pergunta">1. Nota do Garçom:</div>
+        <div class="estrelas" id="g-garcom">
+            <span onclick="v('garcom', 1)">★</span><span onclick="v('garcom', 2)">★</span><span onclick="v('garcom', 3)">★</span><span onclick="v('garcom', 4)">★</span><span onclick="v('garcom', 5)">★</span>
+        </div>
+
+        <div class="pergunta">2. Atendimento do Caixa:</div>
+        <div class="estrelas" id="g-caixa">
+            <span onclick="v('caixa', 1)">★</span><span onclick="v('caixa', 2)">★</span><span onclick="v('caixa', 3)">★</span><span onclick="v('caixa', 4)">★</span><span onclick="v('caixa', 5)">★</span>
+        </div>
+
+        <div class="pergunta">3. Nota da Pizza:</div>
+        <div class="estrelas" id="g-pizza">
+            <span onclick="v('pizza', 1)">★</span><span onclick="v('pizza', 2)">★</span><span onclick="v('pizza', 3)">★</span><span onclick="v('pizza', 4)">★</span><span onclick="v('pizza', 5)">★</span>
+        </div>
+
+        <button class="btn-enviar" onclick="enviar()">CONCLUIR ⭐</button>
+    </div>
+
+    <script>
+        let d = { mesa: "", garcom: "", n_garcom: 0, n_caixa: 0, n_pizza: 0 };
+
+        // Gerar 18 Mesas automaticamente
+        const box = document.getElementById('box-mesas');
+        for (let i = 1; i <= 18; i++) {
+            let n = i < 10 ? '0' + i : i;
+            box.innerHTML += `<div class="mesa-item" onclick="selM('${n}')">Mesa ${n}</div>`;
+        }
+
+        function selM(n) { 
+            d.mesa = n; 
+            document.getElementById('mesa-txt').innerText = "✅ MESA " + n;
+            document.getElementById('detalhe-mesa').removeAttribute('open');
+        }
+
+        function selG(n, idade) { 
+            d.garcom = n; 
+            document.getElementById('garcom-txt').innerText = "✅ " + n;
+            document.getElementById('detalhe-garcom').removeAttribute('open');
+        }
+
+        // Função de Estrelas reforçada
+        function v(tipo, nota) { 
+            d['n_' + tipo] = nota; 
+            const estrelas = document.querySelectorAll(`#g-${tipo} span`);
+            estrelas.forEach((estrela, i) => {
+                estrela.classList.toggle('ativo', i < nota);
+            });
+        }
+
+        function enviar() {
+            if(!d.mesa || !d.garcom || d.n_garcom == 0 || d.n_caixa == 0 || d.n_pizza == 0) {
+                return alert("Por favor, preencha todos os campos e dê todas as notas!");
+            }
+            alert("A Vargas Pizzaria agradece sua avaliação!");
+            location.reload();
+        }
+    </script>
+</body>
+</html>

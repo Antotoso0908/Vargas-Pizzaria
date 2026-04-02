@@ -7,12 +7,15 @@
     <style>
         body { font-family: 'Segoe UI', sans-serif; background-color: #000; color: white; text-align: center; margin: 0; padding: 20px; }
 
+        /* Barra de Topo */
         .nav-topo { display: flex; justify-content: space-between; align-items: center; max-width: 500px; margin: 0 auto 30px auto; padding: 0 10px; }
         .btn-voltar { color: #888; text-decoration: underline; font-size: 13px; cursor: pointer; background: none; border: none; padding: 0; }
         .link-gerente { color: #888; text-decoration: underline; font-size: 13px; cursor: pointer; }
 
+        /* Pop-ups (Modais) */
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); }
 
+        /* Modal de Erro Customizado (Fundo Vermelho, Letra Branca, Itálico) */
         .modal-content-erro { 
             background: #FF0000; 
             margin: 25% auto; 
@@ -30,15 +33,18 @@
         .btn-erro-ok { background: white; color: red; border: none; padding: 10px 25px; border-radius: 8px; font-weight: bold; cursor: pointer; }
         .btn-cinza { background: #444; color: white; }
 
+        /* Estrutura de Abas */
         .aba-setor { width: 100%; max-width: 500px; margin: 12px auto; border-radius: 15px; overflow: hidden; border: 1px solid #333; }
         .aba-topo { padding: 20px; font-weight: bold; cursor: pointer; display: flex; justify-content: space-between; text-transform: uppercase; font-size: 14px; }
         .aba-conteudo { display: none; background: #111; padding: 20px; border-top: 1px solid #333; }
 
+        /* Cores Setores */
         .c-1 { background: #E63946; } .c-2 { background: #FFB300; color: #000; } 
         .c-3 { background: #F3722C; } .c-4 { background: #4CAF50; } .c-5 { background: #0077B6; }
 
         .btn-entrar { background: white; color: black; border: none; padding: 15px; width: 100%; border-radius: 10px; font-weight: bold; cursor: pointer; margin-bottom: 25px; font-size: 16px; }
 
+        /* Grid de Funcionários */
         .equipe-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .card-func { background: #1a1a1a; border: 1px solid #222; display: flex; align-items: center; padding: 8px; border-radius: 10px; }
         .foto { width: 40px; height: 55px; background: #333; border-radius: 4px; margin-right: 10px; flex-shrink: 0; }
@@ -46,6 +52,7 @@
         .nome { font-size: 11px; font-weight: bold; margin: 0; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .idade { font-size: 10px; color: #666; margin-top: 2px; }
 
+        /* Login */
         #tela-login { background: #1a1a1a; padding: 40px 20px; border-radius: 25px; border: 2px solid #E63946; max-width: 320px; margin: 80px auto; }
         .input-vargas { width: 100%; padding: 15px; margin: 10px 0; border-radius: 12px; border: 1px solid #333; background: #000; color: white; font-size: 16px; box-sizing: border-box; }
     </style>
@@ -121,16 +128,11 @@
                 <button class="btn-entrar" onclick="tentarEntrarNoSetor('limpeza')">ENTRAR</button>
             </div>
         </div>
-
     </div>
 
-        <script>
-        // LOGIN DE RESERVA (admin@vargas.com / 123)
-        // Cargo "dono" só entra no Acesso Restrito agora.
-        const reserva = { 
-            "admin@vargas.com": { senha: "123", nome: "Anthony", cargo: "dono" } 
-        };
-
+    <script>
+        // LOGIN RESERVA
+        const reserva = { "admin@vargas.com": { senha: "123", nome: "Anthony", cargo: "dono" } };
         let usuarioLogado = null;
 
         function logar() {
@@ -143,17 +145,14 @@
             }
 
             try {
-                google.script.run.withSuccessHandler(function(user) {
-                    if(user) { sucessoLogin(user); } 
-                    else { alert("E-mail ou Senha incorretos."); }
+                google.script.run.withSuccessHandler(function(u) {
+                    if(u) sucessoLogin(u); else alert("Login inválido.");
                 }).verificarLogin(e, s);
-            } catch(err) {
-                console.log("Sistema Offline.");
-            }
+            } catch(err) { console.log("Offline"); }
         }
 
-        function sucessoLogin(dados) {
-            usuarioLogado = dados;
+        function sucessoLogin(d) {
+            usuarioLogado = d;
             document.getElementById('tela-login').style.display = 'none';
             document.getElementById('portal').style.display = 'block';
         }
@@ -165,24 +164,20 @@
             el.style.display = (status === 'block') ? 'none' : 'block';
         }
 
-        // LÓGICA REVISADA: Só entra se o cargo for EXATAMENTE o do setor.
-        function tentarEntrarNoSetor(setorBotao) {
-            if(!usuarioLogado) return;
-
-            if(usuarioLogado.cargo === setorBotao) {
-                alert("Acesso autorizado ao setor: " + setorBotao);
+        // REGRA: Dono NÃO entra em setor comum
+        function tentarEntrarNoSetor(setor) {
+            if(usuarioLogado.cargo === setor) {
+                // Aqui você pode colocar o link de cada setor depois
+                alert("Entrando no setor...");
             } else {
-                // Se for Dono, Gerente ou de outro setor, o modal vermelho barra!
                 document.getElementById('modal-erro').style.display = 'block';
             }
         }
 
-        // LÓGICA REVISADA: Só Dono ou Gerente no Administrativo.
+        // REGRA: Acesso Restrito redireciona para gerente.html
         function tentarAcessoRestrito() {
-            if(!usuarioLogado) return;
-
             if(usuarioLogado.cargo === 'dono' || usuarioLogado.cargo === 'gerente') {
-                alert("Acesso autorizado ao Painel Administrativo!");
+                window.location.href = "gerente.html";
             } else {
                 document.getElementById('modal-erro').style.display = 'block';
             }

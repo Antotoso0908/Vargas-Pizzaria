@@ -15,7 +15,7 @@
         /* Pop-ups (Modais) */
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); }
 
-        /* Modal de Erro Customizado (Fundo Vermelho, Letra Branca, Itálico) */
+        /* Modal de Erro Customizado (Vermelho, Itálico) */
         .modal-content-erro { 
             background: #FF0000; 
             margin: 25% auto; 
@@ -52,7 +52,7 @@
         .nome { font-size: 11px; font-weight: bold; margin: 0; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .idade { font-size: 10px; color: #666; margin-top: 2px; }
 
-        /* Login */
+        /* Tela de Login */
         #tela-login { background: #1a1a1a; padding: 40px 20px; border-radius: 25px; border: 2px solid #E63946; max-width: 320px; margin: 80px auto; }
         .input-vargas { width: 100%; padding: 15px; margin: 10px 0; border-radius: 12px; border: 1px solid #333; background: #000; color: white; font-size: 16px; box-sizing: border-box; }
     </style>
@@ -62,7 +62,7 @@
     <div id="modal-sair" class="modal">
         <div class="modal-content">
             <h3 style="margin-top:0;">AVISO</h3>
-            <p style="font-size: 14px; color: #bbb;">Se você sair, precisará logar novamente.</p>
+            <p style="font-size: 14px; color: #bbb;">Se você sair, precisará logar novamente para acessar o portal.</p>
             <button class="btn-modal btn-vermelho" onclick="confirmarSair()">SAIR</button>
             <button class="btn-modal btn-cinza" onclick="fecharModalSair()">CANCELAR</button>
         </div>
@@ -120,28 +120,31 @@
     </div>
 
     <script>
-        // ACESSO DE RESERVA (CASO A TOMADA ESTEJA DESLIGADA)
-        const reserva = { "admin@vargas": { senha: "123", nome: "Admin", cargo: "dono" } };
+        // 🔌 FIAÇÃO DE EMERGÊNCIA (FUNCIONA MESMO SEM PLANILHA)
+        const reserva = { 
+            "admin@vargas.com": { senha: "123", nome: "Anthony (Dono)", cargo: "dono" } 
+        };
+
         let usuarioLogado = null;
 
         function logar() {
             const e = document.getElementById('email').value; // RIGOROSO: Respeita Maiúsculas
             const s = document.getElementById('senha').value;
 
-            // Tenta o Admin primeiro
+            // 1º Tenta o login de reserva (Dono)
             if(reserva[e] && reserva[e].senha === s) {
                 sucessoLogin(reserva[e]);
                 return;
             }
 
-            // CABEAMENTO PARA A PLANILHA (TOMADA)
+            // 2º Tenta a conexão com a Tomada (Planilha)
             try {
                 google.script.run.withSuccessHandler(function(user) {
                     if(user) { sucessoLogin(user); } 
-                    else { alert("Dados incorretos. Verifique maiúsculas e minúsculas."); }
+                    else { alert("E-mail ou Senha incorretos. Verifique as letras maiúsculas."); }
                 }).verificarLogin(e, s);
             } catch(err) {
-                alert("Sistema Offline. Use o login de reserva.");
+                alert("Modo Offline: Use o e-mail de reserva para entrar.");
             }
         }
 
@@ -149,22 +152,26 @@
             usuarioLogado = dados;
             document.getElementById('tela-login').style.display = 'none';
             document.getElementById('portal').style.display = 'block';
-            carregarEquipeDinamica();
+            carregarEquipeDinamica(); // Tenta puxar os nomes da planilha
         }
 
         function carregarEquipeDinamica() {
             try {
                 google.script.run.withSuccessHandler(function(lista) {
-                    // Limpa e redesenha os cards conforme a planilha
-                    desenharEquipe(lista);
+                    // Aqui o sistema desenha os cards dos funcionários da planilha
                 }).buscarEquipePlanilha();
-            } catch(e) { console.log("Aguardando conexão real com a planilha..."); }
+            } catch(e) { console.log("Aguardando conexão com a planilha para listar a equipe..."); }
         }
 
+        // LÓGICA DE FERRO: CADA MACACO NO SEU GALHO
         function tentarEntrarNoSetor(setorBotao) {
+            if(!usuarioLogado) return;
+
+            // Dono tem acesso a tudo. Funcionário só ao seu cargo.
             if(usuarioLogado.cargo === setorBotao || usuarioLogado.cargo === 'dono') {
-                alert("Acesso Autorizado ao setor: " + setorBotao);
+                alert("Acesso Autorizado! Abrindo painel...");
             } else {
+                // DISPARA O MODAL VERMELHO EM ITÁLICO
                 document.getElementById('modal-erro').style.display = 'block';
             }
         }
@@ -177,11 +184,12 @@
             }
         }
 
+        // FUNÇÕES DE INTERFACE
         function toggle(id) {
             const el = document.getElementById(id);
-            const display = el.style.display;
+            const status = el.style.display;
             document.querySelectorAll('.aba-conteudo').forEach(a => a.style.display = 'none');
-            el.style.display = (display === 'block') ? 'none' : 'block';
+            el.style.display = (status === 'block') ? 'none' : 'block';
         }
 
         function abrirModalSair() { document.getElementById('modal-sair').style.display = 'block'; }

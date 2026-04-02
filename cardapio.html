@@ -12,29 +12,26 @@
             text-align: center;
             padding: 15px;
             margin: 0;
-            margin-bottom: 80px; /* Espaço para a barra do carrinho */
+            margin-bottom: 80px; 
         }
 
-        /* BOTÃO DE VOLTAR IGUAL AO DE AVALIAÇÕES */
-        .topo-nav { 
-            text-align: left; 
-            max-width: 400px; 
-            margin: 0 auto 15px auto; 
-        }
-        .btn-voltar { 
-            background: #333; 
-            color: white; 
-            border: none; 
-            padding: 10px 15px; 
-            border-radius: 8px; 
-            font-weight: bold; 
-            cursor: pointer; 
-        }
-        .btn-voltar:active { background: #555; }
+        .topo-nav { text-align: left; max-width: 400px; margin: 0 auto 15px auto; }
+        .btn-voltar { background: #333; color: white; border: none; padding: 10px 15px; border-radius: 8px; font-weight: bold; cursor: pointer; }
 
         h1 { margin-bottom: 20px; color: #E63946; text-transform: uppercase; }
-        
-        .item-pizza {
+
+        /* Títulos das Seções */
+        .titulo-secao {
+            text-align: left;
+            max-width: 400px;
+            margin: 30px auto 10px auto;
+            color: #E63946;
+            font-size: 22px;
+            border-bottom: 2px solid #333;
+            padding-bottom: 5px;
+        }
+
+        .item-card {
             background-color: #1a1a1a;
             border-left: 5px solid #E63946;
             margin: 15px auto;
@@ -44,44 +41,35 @@
             text-align: left;
             border-radius: 5px;
         }
+        
         .nome { font-weight: bold; color: #E63946; font-size: 20px; display: block; }
         .preco { color: #4CAF50; font-weight: bold; font-size: 18px; display: block; margin-top: 5px; }
         .descricao { font-size: 14px; margin-top: 8px; color: #ccc; margin-bottom: 15px; }
-        
-        .btn-add {
-            background-color: #E63946;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 5px;
-            font-weight: bold;
-            cursor: pointer;
-            width: 100%;
-            text-transform: uppercase;
+
+        /* Estilo dos tamanhos P e G */
+        .opcoes-tamanho { display: flex; gap: 10px; margin-bottom: 15px; }
+        .btn-tam { 
+            background: #222; color: white; border: 1px solid #444; 
+            padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 12px;
         }
-        .btn-add:active { background-color: #b32d36; }
+        .btn-tam.ativo { background: #E63946; border-color: #E63946; }
+
+        .btn-add {
+            background-color: #E63946; color: white; border: none;
+            padding: 10px 15px; border-radius: 5px; font-weight: bold;
+            cursor: pointer; width: 100%; text-transform: uppercase;
+        }
 
         .cart-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background-color: #E63946;
-            padding: 15px 0;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            font-weight: bold;
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.5);
-            z-index: 1000;
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            background-color: #E63946; padding: 15px 0;
+            display: flex; justify-content: space-around; align-items: center;
+            font-weight: bold; z-index: 1000;
         }
         .cart-bar a {
-            background-color: white;
-            color: #E63946;
-            padding: 8px 15px;
-            border-radius: 20px;
-            text-decoration: none;
-            font-size: 14px;
+            background-color: white; color: #E63946;
+            padding: 8px 15px; border-radius: 20px;
+            text-decoration: none; font-size: 14px;
         }
     </style>
 </head>
@@ -91,28 +79,15 @@
         <button class="btn-voltar" onclick="window.location.href='index.html'">⬅ VOLTAR</button>
     </div>
 
-    <h1>🍕 Nosso Cardápio</h1>
+    <h1>🍕 Vargas Pizzaria</h1>
 
-    <div class="item-pizza">
-        <span class="nome">Calabresa</span>
-        <span class="preco">R$ 45,00</span>
-        <p class="descricao">Molho de tomate, mussarela, calabresa fatiada e cebola.</p>
-        <button class="btn-add" onclick="addCarrinho('Calabresa', 45)">+ Adicionar ao Carrinho</button>
-    </div>
+    <div class="titulo-secao">🍕 Seção Pizzas</div>
+    <div id="lista-pizzas">
+        </div>
 
-    <div class="item-pizza">
-        <span class="nome">Mussarela</span>
-        <span class="preco">R$ 40,00</span>
-        <p class="descricao">Molho de tomate, mussarela especial e orégano.</p>
-        <button class="btn-add" onclick="addCarrinho('Mussarela', 40)">+ Adicionar ao Carrinho</button>
-    </div>
-
-    <div class="item-pizza">
-        <span class="nome">Frango c/ Catupiry</span>
-        <span class="preco">R$ 50,00</span>
-        <p class="descricao">Frango desfiado, catupiry original e milho.</p>
-        <button class="btn-add" onclick="addCarrinho('Frango c/ Catupiry', 50)">+ Adicionar ao Carrinho</button>
-    </div>
+    <div class="titulo-secao">🥤 Seção Bebidas</div>
+    <div id="lista-bebidas">
+        </div>
 
     <div class="cart-bar">
         <span id="carrinho-info">🛒 Itens: 0</span>
@@ -126,15 +101,72 @@
             document.getElementById('carrinho-info').innerText = "🛒 Itens: " + carrinho.length;
         }
 
+        // Função para carregar os dados da Planilha (Página 3)
+        function carregarCardapio() {
+            google.script.run.withSuccessHandler(function(itens) {
+                // Organiza por Ordem Alfabética (pelo nome)
+                itens.sort((a, b) => a.nome.localeCompare(b.nome));
+
+                const containerPizzas = document.getElementById('lista-pizzas');
+                const containerBebidas = document.getElementById('lista-bebidas');
+                
+                containerPizzas.innerHTML = "";
+                containerBebidas.innerHTML = "";
+
+                itens.forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = 'item-card';
+                    
+                    let htmlBotaoTamanho = "";
+                    // Se for Categoria 1 (Pizza), adiciona escolha de P ou G
+                    if(item.categoria == 1) {
+                        htmlBotaoTamanho = `
+                            <div class="opcoes-tamanho">
+                                <small>Tamanho:</small>
+                                <button class="btn-tam ativo" onclick="selecionarTamanho(this, ${item.preco}, 'P')">P (6 fatias)</button>
+                                <button class="btn-tam" onclick="selecionarTamanho(this, ${item.preco + 12}, 'G')">G (8 fatias)</button>
+                            </div>
+                        `;
+                    }
+
+                    card.innerHTML = `
+                        <span class="nome">${item.nome}</span>
+                        <span class="preco" id="preco-${item.nome.replace(/\s+/g, '')}">R$ ${item.preco.toFixed(2).replace('.',',')}</span>
+                        <p class="descricao">${item.descricao}</p>
+                        ${htmlBotaoTamanho}
+                        <button class="btn-add" onclick="addCarrinho('${item.nome}', parseFloat(document.getElementById('preco-${item.nome.replace(/\s+/g, '')}').innerText.replace('R$ ','').replace(',','.')))">+ Adicionar</button>
+                    `;
+
+                    if(item.categoria == 1) {
+                        containerPizzas.appendChild(card);
+                    } else {
+                        containerBebidas.appendChild(card);
+                    }
+                });
+            }).getCardapioPagina3(); // Nome da função que você deve ter no Apps Script
+        }
+
+        function selecionarTamanho(btn, novoPreco, tam) {
+            // Muda o texto do preço no card
+            const precoSpan = btn.parentElement.parentElement.querySelector('.preco');
+            precoSpan.innerText = "R$ " + novoPreco.toFixed(2).replace('.', ',');
+            
+            // Estilo visual dos botões
+            const botoes = btn.parentElement.querySelectorAll('.btn-tam');
+            botoes.forEach(b => b.classList.remove('ativo'));
+            btn.classList.add('ativo');
+        }
+
         function addCarrinho(nome, preco) {
             carrinho.push({ nome: nome, preco: preco });
             localStorage.setItem('vargas_carrinho', JSON.stringify(carrinho));
             atualizarInterface();
-            alert(nome + " adicionada! Você vai pagar mesmo né? Trote é crime!");
         }
 
+        // Inicia o carregamento (Se estiver no ambiente Google)
+        try { carregarCardapio(); } catch(e) { console.log("Rodando fora do Google Script"); }
+        
         atualizarInterface();
     </script>
-
 </body>
 </html>

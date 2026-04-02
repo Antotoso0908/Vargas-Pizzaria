@@ -14,10 +14,10 @@
 
         /* Pop-ups (Modais) */
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); }
-        
+
         /* Modal de Erro Customizado (Fundo Vermelho, Letra Branca, Itálico) */
         .modal-content-erro { 
-            background: #FF0000; /* Vermelho Puro */
+            background: #FF0000; 
             margin: 25% auto; 
             padding: 30px; 
             width: 280px; 
@@ -38,16 +38,16 @@
         .aba-topo { padding: 20px; font-weight: bold; cursor: pointer; display: flex; justify-content: space-between; text-transform: uppercase; font-size: 14px; }
         .aba-conteudo { display: none; background: #111; padding: 20px; border-top: 1px solid #333; }
 
-        /* Cores */
+        /* Cores Setores */
         .c-1 { background: #E63946; } .c-2 { background: #FFB300; color: #000; } 
-        .c-3 { background: #F3722C; } .c-4 { background: #4CAF50; } .c-5 { background: #0077B6; }
+        .c-3 { background: #F3722C; }
 
         .btn-entrar { background: white; color: black; border: none; padding: 15px; width: 100%; border-radius: 10px; font-weight: bold; cursor: pointer; margin-bottom: 25px; font-size: 16px; }
 
         /* Grid de Funcionários */
         .equipe-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .card-func { background: #1a1a1a; border: 1px solid #222; display: flex; align-items: center; padding: 8px; border-radius: 10px; }
-        .foto { width: 40px; height: 55px; background: #333; border-radius: 4px; margin-right: 10px; flex-shrink: 0; }
+        .foto { width: 40px; height: 55px; background: #333; border-radius: 4px; margin-right: 10px; flex-shrink: 0; background-size: cover; background-position: center; }
         .info { text-align: left; overflow: hidden; }
         .nome { font-size: 11px; font-weight: bold; margin: 0; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .idade { font-size: 10px; color: #666; margin-top: 2px; }
@@ -62,8 +62,8 @@
     <div id="modal-sair" class="modal">
         <div class="modal-content">
             <h3 style="margin-top:0;">AVISO</h3>
-            <p style="font-size: 14px; color: #bbb;">Se você voltar, terá que fazer o login novamente para acessar o portal.</p>
-            <button class="btn-modal btn-vermelho" onclick="confirmarSair()">OK</button>
+            <p style="font-size: 14px; color: #bbb;">Se você sair, precisará logar novamente.</p>
+            <button class="btn-modal btn-vermelho" onclick="confirmarSair()">SAIR</button>
             <button class="btn-modal btn-cinza" onclick="fecharModalSair()">CANCELAR</button>
         </div>
     </div>
@@ -77,7 +77,7 @@
     </div>
 
     <div id="tela-login">
-        <h2 style="color: #E63946; margin: 0;">LOGIN VARGAS PIZZARIA SISTEM</h2>
+        <h2 style="color: #E63946; margin: 0 0 20px 0;">VARGAS PIZZARIA SYSTEM</h2>
         <input type="email" id="email" class="input-vargas" placeholder="E-mail">
         <input type="password" id="senha" class="input-vargas" placeholder="Senha">
         <button onclick="logar()" style="background:#E63946; color:white; border:none; padding:18px; width:100%; border-radius:12px; font-weight:bold; cursor:pointer; margin-top:10px;">ENTRAR</button>
@@ -85,8 +85,8 @@
 
     <div id="portal" style="display:none;">
         <div class="nav-topo">
-            <button class="btn-voltar" onclick="abrirModalSair()">Voltar para o Início</button>
-            <span class="link-gerente" onclick="tentarAcessoRestrito()">Acesso Restrito</span>
+            <button class="btn-voltar" onclick="abrirModalSair()">Sair do Sistema</button>
+            <span class="link-gerente" onclick="tentarAcessoRestrito()">⚙️ ADM</span>
         </div>
 
         <h1 style="color: #E63946;">PAINEL DA EQUIPE</h1>
@@ -94,93 +94,99 @@
         <div class="aba-setor">
             <div class="aba-topo c-1" onclick="toggle('setor-1')">💰 CAIXA <span>▼</span></div>
             <div id="setor-1" class="aba-conteudo">
-                <button class="btn-entrar" onclick="tentarEntrarNoSetor('caixa')">ENTRAR</button>
-                <div class="equipe-grid">
-                    <div class="card-func"><div class="foto"></div><div class="info"><p class="nome">Anthony Vargas</p><p class="idade">38</p></div></div>
-                    <div class="card-func"><div class="foto"></div><div class="info"><p class="nome">Marcos Lima</p><p class="idade">29</p></div></div>
-                </div>
+                <button class="btn-entrar" onclick="tentarEntrarNoSetor('caixa')">ENTRAR NO CAIXA</button>
+                <div id="grid-caixa" class="equipe-grid">
+                    </div>
             </div>
         </div>
 
         <div class="aba-setor">
             <div class="aba-topo c-2" onclick="toggle('setor-2')">🤵 GARÇOM <span>▼</span></div>
             <div id="setor-2" class="aba-conteudo">
-                <button class="btn-entrar" onclick="tentarEntrarNoSetor('garcon')">ENTRAR</button>
-                <div class="equipe-grid">
-                    <div class="card-func"><div class="foto"></div><div class="info"><p class="nome">Ricardo Silva</p><p class="idade">24</p></div></div>
-                    <div class="card-func"><div class="foto"></div><div class="info"><p class="nome">Aléxia Fernanda</p><p class="idade">26</p></div></div>
-                </div>
+                <button class="btn-entrar" onclick="tentarEntrarNoSetor('garcon')">ENTRAR NO GARÇOM</button>
+                <div id="grid-garcon" class="equipe-grid">
+                    </div>
             </div>
         </div>
 
         <div class="aba-setor">
             <div class="aba-topo c-3" onclick="toggle('setor-3')">🍕 COZINHA <span>▼</span></div>
             <div id="setor-3" class="aba-conteudo">
-                <button class="btn-entrar" onclick="tentarEntrarNoSetor('cozinha')">ENTRAR </button>
-                <div class="equipe-grid">
-                    <div class="card-func"><div class="foto"></div><div class="info"><p class="nome">André Pizzas</p><p class="idade">33</p></div></div>
-                </div>
+                <button class="btn-entrar" onclick="tentarEntrarNoSetor('cozinha')">ENTRAR NA COZINHA</button>
+                <div id="grid-cozinha" class="equipe-grid">
+                    </div>
             </div>
         </div>
-
-        </div>
+    </div>
 
     <script>
-        // Simulando seu Banco de Dados da Planilha com seu novo padrão de e-mail/senha
-        const bancoDeDados = {
-            "anthony01@dono.com": { senha: "Dono01", nome: "Anthony Vargas", cargo: "dono" },
-            "alexia01@garcon.com": { senha: "Garcon01", nome: "Aléxia Fernanda Fragoso", cargo: "garcon" },
-            "ricardo01@garcon.com": { senha: "Garcon01", nome: "Ricardo Silva", cargo: "garcon" },
-            "marcos01@caixa.com": { senha: "Caixa01", nome: "Marcos Lima", cargo: "caixa" }
-        };
-
+        // ACESSO DE RESERVA (CASO A TOMADA ESTEJA DESLIGADA)
+        const reserva = { "admin@vargas": { senha: "123", nome: "Admin", cargo: "dono" } };
         let usuarioLogado = null;
 
         function logar() {
-            const e = document.getElementById('email').value.toLowerCase(); // E-mail é sempre minúsculo
-            const s = document.getElementById('senha').value; // Senha respeita Maiúsculas
+            const e = document.getElementById('email').value; // RIGOROSO: Respeita Maiúsculas
+            const s = document.getElementById('senha').value;
 
-            if(bancoDeDados[e] && bancoDeDados[e].senha === s) {
-                usuarioLogado = bancoDeDados[e];
-                document.getElementById('tela-login').style.display = 'none';
-                document.getElementById('portal').style.display = 'block';
-            } else { 
-                alert("E-mail ou Senha incorretos!"); 
+            // Tenta o Admin primeiro
+            if(reserva[e] && reserva[e].senha === s) {
+                sucessoLogin(reserva[e]);
+                return;
+            }
+
+            // CABEAMENTO PARA A PLANILHA (TOMADA)
+            try {
+                google.script.run.withSuccessHandler(function(user) {
+                    if(user) { sucessoLogin(user); } 
+                    else { alert("Dados incorretos. Verifique maiúsculas e minúsculas."); }
+                }).verificarLogin(e, s);
+            } catch(err) {
+                alert("Sistema Offline. Use o login de reserva.");
+            }
+        }
+
+        function sucessoLogin(dados) {
+            usuarioLogado = dados;
+            document.getElementById('tela-login').style.display = 'none';
+            document.getElementById('portal').style.display = 'block';
+            carregarEquipeDinamica();
+        }
+
+        function carregarEquipeDinamica() {
+            try {
+                google.script.run.withSuccessHandler(function(lista) {
+                    // Limpa e redesenha os cards conforme a planilha
+                    desenharEquipe(lista);
+                }).buscarEquipePlanilha();
+            } catch(e) { console.log("Aguardando conexão real com a planilha..."); }
+        }
+
+        function tentarEntrarNoSetor(setorBotao) {
+            if(usuarioLogado.cargo === setorBotao || usuarioLogado.cargo === 'dono') {
+                alert("Acesso Autorizado ao setor: " + setorBotao);
+            } else {
+                document.getElementById('modal-erro').style.display = 'block';
+            }
+        }
+
+        function tentarAcessoRestrito() {
+            if(usuarioLogado.cargo === 'dono' || usuarioLogado.cargo === 'gerente') {
+                alert("Entrando no Painel Administrativo...");
+            } else {
+                document.getElementById('modal-erro').style.display = 'block';
             }
         }
 
         function toggle(id) {
             const el = document.getElementById(id);
-            const status = el.style.display;
+            const display = el.style.display;
             document.querySelectorAll('.aba-conteudo').forEach(a => a.style.display = 'none');
-            el.style.display = (status === 'block') ? 'none' : 'block';
-        }
-
-        // Lógica: Cada macaco no seu galho
-        function tentarEntrarNoSetor(setorBotao) {
-            // Se o funcionário clicar no botão do SEU PRÓPRIO cargo, ele entra.
-            // Donos e Gerentes não entram em setores simples aqui, conforme combinado.
-            if(usuarioLogado.cargo === setorBotao) {
-                alert("Acesso autorizado! Abrindo painel de " + setorBotao);
-                // window.location.href = setorBotao + ".html";
-            } else {
-                document.getElementById('modal-erro').style.display = 'block';
-            }
-        }
-
-        // Lógica: Acesso Restrito (Só Gerente e Dono)
-        function tentarAcessoRestrito() {
-            if(usuarioLogado.cargo === 'dono' || usuarioLogado.cargo === 'gerente') {
-                alert("Acesso Autorizado ao Painel Administrativo!");
-                // window.location.href = "painel-gerente.html";
-            } else {
-                document.getElementById('modal-erro').style.display = 'block';
-            }
+            el.style.display = (display === 'block') ? 'none' : 'block';
         }
 
         function abrirModalSair() { document.getElementById('modal-sair').style.display = 'block'; }
         function fecharModalSair() { document.getElementById('modal-sair').style.display = 'none'; }
-        function confirmarSair() { window.location.reload(); } // Simula o logout
+        function confirmarSair() { window.location.reload(); }
         function fecharModalErro() { document.getElementById('modal-erro').style.display = 'none'; }
     </script>
 </body>

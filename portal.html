@@ -1,156 +1,28 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal Funcionário - Vargas Pizzaria</title>
-    <style>
-        body { font-family: 'Segoe UI', sans-serif; background-color: #000; color: white; text-align: center; margin: 0; padding: 20px; }
-
-        /* Barra de Topo */
-        .nav-topo { display: flex; justify-content: space-between; align-items: center; max-width: 500px; margin: 0 auto 30px auto; padding: 0 10px; }
-        .btn-voltar { color: #888; text-decoration: underline; font-size: 13px; cursor: pointer; background: none; border: none; padding: 0; }
-        .link-gerente { color: #888; text-decoration: underline; font-size: 13px; cursor: pointer; }
-
-        /* Pop-ups (Modais) */
-        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); }
-
-        /* Modal de Erro Customizado (Fundo Vermelho, Letra Branca, Itálico) */
-        .modal-content-erro { 
-            background: #FF0000; /* Vermelho Puro */
-            margin: 25% auto; 
-            padding: 30px; 
-            width: 280px; 
-            border-radius: 20px; 
-            position: relative;
-            color: white;
-        }
-        .texto-negado { font-style: italic; font-weight: bold; font-size: 20px; margin-bottom: 15px; }
-
-        .modal-content { background: #1a1a1a; margin: 25% auto; padding: 30px; border: 2px solid #E63946; width: 280px; border-radius: 20px; position: relative; }
-        .btn-modal { padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; border: none; margin: 5px; }
-        .btn-vermelho { background: #E63946; color: white; }
-        .btn-erro-ok { background: white; color: red; border: none; padding: 10px 25px; border-radius: 8px; font-weight: bold; cursor: pointer; }
-        .btn-cinza { background: #444; color: white; }
-
-        /* Estrutura de Abas */
-        .aba-setor { width: 100%; max-width: 500px; margin: 12px auto; border-radius: 15px; overflow: hidden; border: 1px solid #333; }
-        .aba-topo { padding: 20px; font-weight: bold; cursor: pointer; display: flex; justify-content: space-between; text-transform: uppercase; font-size: 14px; }
-        .aba-conteudo { display: none; background: #111; padding: 20px; border-top: 1px solid #333; }
-
-        /* Cores */
-        .c-1 { background: #E63946; } .c-2 { background: #FFB300; color: #000; } 
-        .c-3 { background: #F3722C; } .c-4 { background: #4CAF50; } .c-5 { background: #0077B6; }
-
-        .btn-entrar { background: white; color: black; border: none; padding: 15px; width: 100%; border-radius: 10px; font-weight: bold; cursor: pointer; margin-bottom: 25px; font-size: 16px; }
-
-        /* Grid de Funcionários */
-        .equipe-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .card-func { background: #1a1a1a; border: 1px solid #222; display: flex; align-items: center; padding: 8px; border-radius: 10px; }
-        .foto { width: 40px; height: 55px; background: #333; border-radius: 4px; margin-right: 10px; flex-shrink: 0; }
-        .info { text-align: left; overflow: hidden; }
-        .nome { font-size: 11px; font-weight: bold; margin: 0; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .idade { font-size: 10px; color: #666; margin-top: 2px; }
-
-        /* Login */
-        #tela-login { background: #1a1a1a; padding: 40px 20px; border-radius: 25px; border: 2px solid #E63946; max-width: 320px; margin: 80px auto; }
-        .input-vargas { width: 100%; padding: 15px; margin: 10px 0; border-radius: 12px; border: 1px solid #333; background: #000; color: white; font-size: 16px; box-sizing: border-box; }
-    </style>
-</head>
-<body>
-
-    <div id="modal-sair" class="modal">
-        <div class="modal-content">
-            <h3 style="margin-top:0;">AVISO</h3>
-            <p style="font-size: 14px; color: #bbb;">Se você voltar, terá que fazer o login novamente para acessar o portal.</p>
-            <button class="btn-modal btn-vermelho" onclick="confirmarSair()">OK</button>
-            <button class="btn-modal btn-cinza" onclick="fecharModalSair()">CANCELAR</button>
-        </div>
-    </div>
-
-    <div id="modal-erro" class="modal">
-        <div class="modal-content-erro">
-            <div class="texto-negado">Acesso Negado</div>
-            <p style="font-size: 14px; margin-bottom: 20px;">Você não tem permissão para entrar aqui.</p>
-            <button class="btn-erro-ok" onclick="fecharModalErro()">OK</button>
-        </div>
-    </div>
-
-    <div id="tela-login">
-        <h2 style="color: #E63946; margin: 0;">LOGIN VARGAS PIZZARIA SISTEM</h2>
-        <input type="email" id="email" class="input-vargas" placeholder="E-mail">
-        <input type="password" id="senha" class="input-vargas" placeholder="Senha">
-        <button onclick="logar()" style="background:#E63946; color:white; border:none; padding:18px; width:100%; border-radius:12px; font-weight:bold; cursor:pointer; margin-top:10px;">ENTRAR</button>
-    </div>
-
-    <div id="portal" style="display:none;">
-        <div class="nav-topo">
-            <button class="btn-voltar" onclick="abrirModalSair()">Voltar para o Início</button>
-            <span class="link-gerente" onclick="tentarAcessoRestrito()">Acesso Restrito</span>
-        </div>
-
-        <h1 style="color: #E63946;">PAINEL DA EQUIPE</h1>
-
-        <div class="aba-setor">
-            <div class="aba-topo c-1" onclick="toggle('setor-1')">💰 CAIXA <span>▼</span></div>
-            <div id="setor-1" class="aba-conteudo">
-                <button class="btn-entrar" onclick="tentarEntrarNoSetor('caixa')">ENTRAR</button>
-                <div class="equipe-grid">
-                    <div class="card-func"><div class="foto"></div><div class="info"><p class="nome">Anthony Vargas</p><p class="idade">38</p></div></div>
-                    <div class="card-func"><div class="foto"></div><div class="info"><p class="nome">Marcos Lima</p><p class="idade">29</p></div></div>
-                </div>
-            </div>
-        </div>
-
-        <div class="aba-setor">
-            <div class="aba-topo c-2" onclick="toggle('setor-2')">🤵 GARÇOM <span>▼</span></div>
-            <div id="setor-2" class="aba-conteudo">
-                <button class="btn-entrar" onclick="tentarEntrarNoSetor('garcon')">ENTRAR</button>
-                <div class="equipe-grid">
-                    <div class="card-func"><div class="foto"></div><div class="info"><p class="nome">Ricardo Silva</p><p class="idade">24</p></div></div>
-                    <div class="card-func"><div class="foto"></div><div class="info"><p class="nome">Aléxia Fernanda</p><p class="idade">26</p></div></div>
-                </div>
-            </div>
-        </div>
-
-        <div class="aba-setor">
-            <div class="aba-topo c-3" onclick="toggle('setor-3')">🍕 COZINHA <span>▼</span></div>
-            <div id="setor-3" class="aba-conteudo">
-                <button class="btn-entrar" onclick="tentarEntrarNoSetor('cozinha')">ENTRAR </button>
-                <div class="equipe-grid">
-                    <div class="card-func"><div class="foto"></div><div class="info"><p class="nome">André Pizzas</p><p class="idade">33</p></div></div>
-                </div>
-            </div>
-        </div>
-
-        </div>
-
     <script>
-        // GERADOR DE EMERGÊNCIA (LOGIN DE RESERVA)
-        const bancoDeDadosReserva = {
-            "admin@vargas.com": { senha: "123", nome: "Anthony (Dono)", cargo: "dono" }
+        // LOGIN DE RESERVA (admin@vargas.com / 123)
+        // Cargo "dono" só entra no Acesso Restrito agora.
+        const reserva = { 
+            "admin@vargas.com": { senha: "123", nome: "Anthony", cargo: "dono" } 
         };
 
         let usuarioLogado = null;
 
         function logar() {
-            const e = document.getElementById('email').value; // RIGOROSO: Respeita Maiúsculas e Minúsculas
+            const e = document.getElementById('email').value;
             const s = document.getElementById('senha').value;
 
-            // 1º Tenta o login de reserva
-            if(bancoDeDadosReserva[e] && bancoDeDadosReserva[e].senha === s) {
-                sucessoLogin(bancoDeDadosReserva[e]);
+            if(reserva[e] && reserva[e].senha === s) {
+                sucessoLogin(reserva[e]);
                 return;
             }
 
-            // 2º CABEAMENTO PARA A PLANILHA (TOMADA)
             try {
                 google.script.run.withSuccessHandler(function(user) {
                     if(user) { sucessoLogin(user); } 
-                    else { alert("E-mail ou Senha incorretos. Verifique as letras maiúsculas."); }
+                    else { alert("E-mail ou Senha incorretos."); }
                 }).verificarLogin(e, s);
             } catch(err) {
-                console.log("Sistema Offline: Conecte ao Google Apps Script para login real.");
+                console.log("Sistema Offline.");
             }
         }
 
@@ -158,7 +30,6 @@
             usuarioLogado = dados;
             document.getElementById('tela-login').style.display = 'none';
             document.getElementById('portal').style.display = 'block';
-            // Aqui futuramente chamaremos a função para carregar as fotos da planilha
         }
 
         function toggle(id) {
@@ -168,22 +39,24 @@
             el.style.display = (status === 'block') ? 'none' : 'block';
         }
 
-        // Lógica de Ferro: Cada macaco no seu galho
+        // LÓGICA REVISADA: Só entra se o cargo for EXATAMENTE o do setor.
         function tentarEntrarNoSetor(setorBotao) {
             if(!usuarioLogado) return;
 
-            // Dono entra em tudo. Funcionário só no seu cargo.
-            if(usuarioLogado.cargo === setorBotao || usuarioLogado.cargo === 'dono') {
-                alert("Acesso autorizado! Abrindo painel de " + setorBotao);
+            if(usuarioLogado.cargo === setorBotao) {
+                alert("Acesso autorizado ao setor: " + setorBotao);
             } else {
+                // Se for Dono, Gerente ou de outro setor, o modal vermelho barra!
                 document.getElementById('modal-erro').style.display = 'block';
             }
         }
 
-        // Lógica de Acesso Restrito
+        // LÓGICA REVISADA: Só Dono ou Gerente no Administrativo.
         function tentarAcessoRestrito() {
+            if(!usuarioLogado) return;
+
             if(usuarioLogado.cargo === 'dono' || usuarioLogado.cargo === 'gerente') {
-                alert("Acesso Autorizado ao Painel Administrativo!");
+                alert("Acesso autorizado ao Painel Administrativo!");
             } else {
                 document.getElementById('modal-erro').style.display = 'block';
             }
@@ -194,5 +67,3 @@
         function confirmarSair() { window.location.reload(); }
         function fecharModalErro() { document.getElementById('modal-erro').style.display = 'none'; }
     </script>
-</body>
-</html>

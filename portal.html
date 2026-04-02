@@ -6,7 +6,7 @@
     <title>Portal Funcionário - Vargas Pizzaria</title>
     <style>
         body { font-family: 'Segoe UI', sans-serif; background-color: #000; color: white; text-align: center; margin: 0; padding: 20px; }
-        
+
         /* Barra de Topo */
         .nav-topo { display: flex; justify-content: space-between; align-items: center; max-width: 500px; margin: 0 auto 30px auto; padding: 0 10px; }
         .btn-voltar { color: #888; text-decoration: underline; font-size: 13px; cursor: pointer; background: none; border: none; padding: 0; }
@@ -14,9 +14,23 @@
 
         /* Pop-ups (Modais) */
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); }
+        
+        /* Modal de Erro Customizado (Fundo Vermelho, Letra Branca, Itálico) */
+        .modal-content-erro { 
+            background: #FF0000; /* Vermelho Puro */
+            margin: 25% auto; 
+            padding: 30px; 
+            width: 280px; 
+            border-radius: 20px; 
+            position: relative;
+            color: white;
+        }
+        .texto-negado { font-style: italic; font-weight: bold; font-size: 20px; margin-bottom: 15px; }
+
         .modal-content { background: #1a1a1a; margin: 25% auto; padding: 30px; border: 2px solid #E63946; width: 280px; border-radius: 20px; position: relative; }
         .btn-modal { padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; border: none; margin: 5px; }
         .btn-vermelho { background: #E63946; color: white; }
+        .btn-erro-ok { background: white; color: red; border: none; padding: 10px 25px; border-radius: 8px; font-weight: bold; cursor: pointer; }
         .btn-cinza { background: #444; color: white; }
 
         /* Estrutura de Abas */
@@ -55,11 +69,10 @@
     </div>
 
     <div id="modal-erro" class="modal">
-        <div class="modal-content">
-            <h2 style="color: #E63946; margin: 0;">🚫</h2>
-            <h3 style="color: #fff; margin: 10px 0;">ACESSO NEGADO</h3>
-            <p style="font-size: 13px; color: #888;">Você não pertence a este setor.</p>
-            <button class="btn-modal btn-vermelho" onclick="fecharModalErro()">OK</button>
+        <div class="modal-content-erro">
+            <div class="texto-negado">Acesso Negado</div>
+            <p style="font-size: 14px; margin-bottom: 20px;">Você não tem permissão para entrar aqui.</p>
+            <button class="btn-erro-ok" onclick="fecharModalErro()">OK</button>
         </div>
     </div>
 
@@ -73,15 +86,15 @@
     <div id="portal" style="display:none;">
         <div class="nav-topo">
             <button class="btn-voltar" onclick="abrirModalSair()">Voltar para o Início</button>
-            <span class="link-gerente" onclick="alert('Indo para Painel do Gerente...')">Acesso Restrito</span>
+            <span class="link-gerente" onclick="tentarAcessoRestrito()">Acesso Restrito</span>
         </div>
-        
+
         <h1 style="color: #E63946;">PAINEL DA EQUIPE</h1>
 
         <div class="aba-setor">
             <div class="aba-topo c-1" onclick="toggle('setor-1')">💰 CAIXA <span>▼</span></div>
             <div id="setor-1" class="aba-conteudo">
-                <button class="btn-entrar" onclick="tentar(1)">ENTRAR</button>
+                <button class="btn-entrar" onclick="tentarEntrarNoSetor('caixa')">ENTRAR</button>
                 <div class="equipe-grid">
                     <div class="card-func"><div class="foto"></div><div class="info"><p class="nome">Anthony Vargas</p><p class="idade">38</p></div></div>
                     <div class="card-func"><div class="foto"></div><div class="info"><p class="nome">Marcos Lima</p><p class="idade">29</p></div></div>
@@ -92,13 +105,10 @@
         <div class="aba-setor">
             <div class="aba-topo c-2" onclick="toggle('setor-2')">🤵 GARÇOM <span>▼</span></div>
             <div id="setor-2" class="aba-conteudo">
-                <button class="btn-entrar" onclick="tentar(2)">ENTRAR</button>
+                <button class="btn-entrar" onclick="tentarEntrarNoSetor('garcon')">ENTRAR</button>
                 <div class="equipe-grid">
                     <div class="card-func"><div class="foto"></div><div class="info"><p class="nome">Ricardo Silva</p><p class="idade">24</p></div></div>
                     <div class="card-func"><div class="foto"></div><div class="info"><p class="nome">Aléxia Fernanda</p><p class="idade">26</p></div></div>
-                    <div class="card-func"><div class="foto"></div><div class="info"><p class="nome">Lucas Neto</p><p class="idade">22</p></div></div>
-                    <div class="card-func"><div class="foto"></div><div class="info"><p class="nome">Felipe Amorim</p><p class="idade">27</p></div></div>
-                    <div class="card-func"><div class="foto"></div><div class="info"><p class="nome">Bruno Costa</p><p class="idade">30</p></div></div>
                 </div>
             </div>
         </div>
@@ -106,54 +116,37 @@
         <div class="aba-setor">
             <div class="aba-topo c-3" onclick="toggle('setor-3')">🍕 COZINHA <span>▼</span></div>
             <div id="setor-3" class="aba-conteudo">
-                <button class="btn-entrar" onclick="tentar(3)">ENTRAR </button>
+                <button class="btn-entrar" onclick="tentarEntrarNoSetor('cozinha')">ENTRAR </button>
                 <div class="equipe-grid">
-                    <div class="card-func"><div class="foto"></div><div class="info"><p class="nome">Mestre Souza</p><p class="idade">45</p></div></div>
                     <div class="card-func"><div class="foto"></div><div class="info"><p class="nome">André Pizzas</p><p class="idade">33</p></div></div>
-                    <div class="card-func"><div class="foto"></div><div class="info"><p class="nome">Carla Maria</p><p class="idade">28</p></div></div>
                 </div>
             </div>
         </div>
 
-        <div class="aba-setor">
-            <div class="aba-topo c-4" onclick="toggle('setor-4')">🛵 ENTREGA <span>▼</span></div>
-            <div id="setor-4" class="aba-conteudo">
-                <button class="btn-entrar" onclick="tentar(4)">ENTRAR </button>
-                <div class="equipe-grid">
-                    <div class="card-func"><div class="foto"></div><div class="info"><p class="nome">Júnior Moto</p><p class="idade">26</p></div></div>
-                    <div class="card-func"><div class="foto"></div><div class="info"><p class="nome">Paulo Veloz</p><p class="idade">34</p></div></div>
-                </div>
-            </div>
         </div>
-
-        <div class="aba-setor">
-            <div class="aba-topo c-5" onclick="toggle('setor-5')">🧹 LIMPEZA <span>▼</span></div>
-            <div id="setor-5" class="aba-conteudo">
-                <button class="btn-entrar" onclick="tentar(5)">ENTRAR </button>
-                <div class="equipe-grid">
-                    <div class="card-func"><div class="foto"></div><div class="info"><p class="nome">Dona Ana</p><p class="idade">52</p></div></div>
-                    <div class="card-func"><div class="foto"></div><div class="info"><p class="nome">Beto Higiene</p><p class="idade">40</p></div></div>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <script>
-        const funcionarios = {
-            "admin@vargas.com": { senha: "123", nome: "Anthony Vargas", setor: 1 },
-            "fragosoalexia480@gmail.com": { senha: "e2313525", nome: "Aléxia Fernanda Fragoso de Jesus", setor: 2 }
+        // Simulando seu Banco de Dados da Planilha com seu novo padrão de e-mail/senha
+        const bancoDeDados = {
+            "anthony01@dono.com": { senha: "Dono01", nome: "Anthony Vargas", cargo: "dono" },
+            "alexia01@garcon.com": { senha: "Garcon01", nome: "Aléxia Fernanda Fragoso", cargo: "garcon" },
+            "ricardo01@garcon.com": { senha: "Garcon01", nome: "Ricardo Silva", cargo: "garcon" },
+            "marcos01@caixa.com": { senha: "Caixa01", nome: "Marcos Lima", cargo: "caixa" }
         };
 
         let usuarioLogado = null;
 
         function logar() {
-            const e = document.getElementById('email').value;
-            const s = document.getElementById('senha').value;
-            if(funcionarios[e] && funcionarios[e].senha === s) {
-                usuarioLogado = funcionarios[e];
+            const e = document.getElementById('email').value.toLowerCase(); // E-mail é sempre minúsculo
+            const s = document.getElementById('senha').value; // Senha respeita Maiúsculas
+
+            if(bancoDeDados[e] && bancoDeDados[e].senha === s) {
+                usuarioLogado = bancoDeDados[e];
                 document.getElementById('tela-login').style.display = 'none';
                 document.getElementById('portal').style.display = 'block';
-            } else { alert("E-mail ou Senha incorretos!"); }
+            } else { 
+                alert("E-mail ou Senha incorretos!"); 
+            }
         }
 
         function toggle(id) {
@@ -163,18 +156,31 @@
             el.style.display = (status === 'block') ? 'none' : 'block';
         }
 
-        function tentar(idSetorAba) {
-            if(usuarioLogado.setor === idSetorAba) {
-                alert("Abrindo painel do setor...");
+        // Lógica: Cada macaco no seu galho
+        function tentarEntrarNoSetor(setorBotao) {
+            // Se o funcionário clicar no botão do SEU PRÓPRIO cargo, ele entra.
+            // Donos e Gerentes não entram em setores simples aqui, conforme combinado.
+            if(usuarioLogado.cargo === setorBotao) {
+                alert("Acesso autorizado! Abrindo painel de " + setorBotao);
+                // window.location.href = setorBotao + ".html";
             } else {
                 document.getElementById('modal-erro').style.display = 'block';
             }
         }
 
-        // Funções dos Modais
+        // Lógica: Acesso Restrito (Só Gerente e Dono)
+        function tentarAcessoRestrito() {
+            if(usuarioLogado.cargo === 'dono' || usuarioLogado.cargo === 'gerente') {
+                alert("Acesso Autorizado ao Painel Administrativo!");
+                // window.location.href = "painel-gerente.html";
+            } else {
+                document.getElementById('modal-erro').style.display = 'block';
+            }
+        }
+
         function abrirModalSair() { document.getElementById('modal-sair').style.display = 'block'; }
         function fecharModalSair() { document.getElementById('modal-sair').style.display = 'none'; }
-        function confirmarSair() { window.location.href = "index.html"; }
+        function confirmarSair() { window.location.reload(); } // Simula o logout
         function fecharModalErro() { document.getElementById('modal-erro').style.display = 'none'; }
     </script>
 </body>
